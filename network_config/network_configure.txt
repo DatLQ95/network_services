@@ -1,0 +1,29 @@
+# Prometheous
+Prometheous: 9090
+Export for prometheous: 
+web server client: 8000
+search server client: 8001
+Online shopping client: 8002
+Media streaming client: 8003
+
+
+# Search server
+Proxy for search server: 8888
+Search server: 8983, 8984, 8985
+
+
+# Web server
+Web server: 8080
+Proxy for web server:
+
+#Online shopping:
+Proxy for online shopping web server: 8880
+Online shopping web server: 
+
+
+# Media Streaming: 
+Proxy for media streaming server:8008
+Media streaming server: 
+
+
+

@@ -1,0 +1,15 @@
+Build docker: 
+docker build -t rtmp-hls-server .
+Run docker: 
+docker run -d -p 1935:1935 -p 8888:8080 --name rtmp_hls_server rtmp-hls-server
+Check logs: 
+docker container logs -f rtmp_hls_server
+
+To put a stream input to server: 
+ffmpeg -r 30 -f lavfi -i testsrc -vf scale=1280:960 -vcodec libx264 -profile:v baseline -pix_fmt yuv420p -f flv rtmp://131.155.35.54:1935/live/test
+
+To send a request: 
+ffmpeg -i rtmp://131.155.35.54/live/test -y -t 10 -f flv emre.flv
+
+To send request to get video: 
+ffmpeg -i rtmp://131.155.35.54:1935/vod/broadcast_source.mp4 -y -t 10 -f flv emre.flv

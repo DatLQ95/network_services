@@ -1,0 +1,20 @@
+worker_processes  auto;
+#error_log  logs/error.log;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    upstream myapp1 {
+        server 131.155.35.54:8983;
+    }
+
+    server {
+        listen ${NGINX_PORT};
+
+        location / {
+            proxy_pass http://myapp1;
+        }
+    }
+}

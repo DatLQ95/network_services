@@ -1,0 +1,1 @@
+docker cp netdata:/app/received_data.dat .

@@ -1,0 +1,18 @@
+version: "3.6"
+
+services:
+  # httpd-client: 
+  #   image: luongquocdat01091995/httpd-application:client
+  #   environment: 
+  #       - SERVER_IP=192.168.2.83
+  #       - SERVER_PORT=8080
+  #   deploy: 
+  #     placement: 
+  #       constraints:
+  #         - node.labels.node_number==4
+  netdata_app:
+    image: luongquocdat01091995/netdata:latest
+    deploy: 
+      placement: 
+        constraints:
+          - node.labels.node_number==4
