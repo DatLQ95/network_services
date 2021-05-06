@@ -1,7 +1,5 @@
-/nginx_server_media/server/video
+/nginx_server_media/server/video/nature.mp4
 
 /media_nginx
 
 /nginx_server
-
-*.mp4
