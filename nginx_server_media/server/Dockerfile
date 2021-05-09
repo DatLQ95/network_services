@@ -45,6 +45,7 @@ RUN cd /tmp/build/nginx-${NGINX_VERSION} && \
         --http-client-body-temp-path=/tmp/nginx-client-body \
         --with-http_ssl_module \
         --with-threads \
+		--with-http_mp4_module \
         --add-module=/tmp/build/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
     make -j $(getconf _NPROCESSORS_ONLN) && \
     make install
@@ -112,6 +113,6 @@ COPY players /usr/local/nginx/html/players
 COPY video /opt/video/vod/
 
 EXPOSE 1935
-EXPOSE 8080
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
