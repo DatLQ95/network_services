@@ -13,3 +13,4 @@ ffmpeg -i rtmp://131.155.35.54/live/test -y -t 10 -f flv emre.flv
 
 To send request to get video: 
 ffmpeg -i rtmp://131.155.35.54:1935/vod/broadcast_source.mp4 -y -t 10 -f flv emre.flv
+

@@ -15,8 +15,13 @@ from prometheus_client import start_http_server, Summary, Counter
 import os
 
 IP_ADDRESS = os.getenv('IP_ADDRESS')
+PORT_NUMBER = os.getenv('PORT_NUMBER')
 USER_NO = os.getenv('USER_NO')
 MEDIA_SERVICE = os.getenv('MEDIA_SERVICE')
+URL = str(IP_ADDRESS) + ":" + str(PORT_NUMBER)
+
+#Global var:
+number_user = 0
 
 #TODO: this is prometheous code 
 bucks = [(i*50) for i in range(20,100)]
@@ -45,11 +50,11 @@ class User(threading.Thread):
             if self.stopped():
                 return
             if MEDIA_SERVICE == 1: 
-                text = "rtmp://" + str(IP_ADDRESS) + "/vod/aaa.mp4"
+                text = "rtmp://" + str(URL) + "/vod/aaa.mp4"
                 run(['ffmpeg',  '-i',  text, '-c:v', 'copy', '-c:a', 'copy', '-preset:v', 'ultrafast', '-segment_list_flags', '-y', '-t', '50', '-f', 'flv', 'emre.flv', '-y'])  
                 time.sleep(np.random.uniform(low=0.1, high=0.5))
             else:
-                upool.request('GET',IP_ADDRESS)
+                upool.request('GET',URL)
                 time.sleep(np.random.exponential(30))
 
 class UserTestMeasure(threading.Thread):
@@ -69,28 +74,57 @@ class UserTestMeasure(threading.Thread):
                 return
             if MEDIA_SERVICE == 1: 
                 # TODO: find the way to measure the reponse latency from media?
-                text = "rtmp://" + str(IP_ADDRESS) + "/vod/aaa.mp4"
+                text = "rtmp://" + str(URL) + "/vod/aaa.mp4"
                 run(['ffmpeg',  '-i',  text, '-c:v', 'copy', '-c:a', 'copy', '-preset:v', 'ultrafast', '-segment_list_flags', '-y', '-t', '50', '-f', 'flv', 'emre.flv', '-y'])  
                 time.sleep(np.random.uniform(low=0.1, high=0.5))
             else:
-                r =requests.get(IP_ADDRESS)
+                r =requests.get(URL)
                 h.observe(r.elapsed.microseconds)
                 time.sleep(1)
 
 start_http_server(8000)
-# print(IP_ADDRESS)
-# print(USER_NO)
-# print(MEDIA_SERVICE)
-
 t = UserTestMeasure()
 t.start()
 
-searchingUserThreads = []
-for i in range(USER_NO):
-    t = User()
-    t.start()
-    searchingUserThreads.append(t)
-    time.sleep(0.01)
+UserThreads = []
+while True: 
+    USER_NO = os.getenv('USER_NO')
+    add_number_user = number_user - USER_NO
+    # add or remove users
+    if(add_number_user > 0):
+        for i in range(add_number_user):
+            t = User()
+            t.start()
+            UserThreads.append(t)
+            time.sleep(0.01)
+    elif(add_number_user < 0):
+        for i,t in enumerate(UserThreads):
+            if (i < (add_number_user * (-1))):
+                # print("therehere")
+                t.stop()
+                UserThreads.remove(t)
+                time.sleep(0.01)
+    number_user = USER_NO
+    # # sleep for 1 min
+    # time.sleep(20)
+    # if number_user < USER_NO:
+    #     t = User()
+    #     t.start()
+    #     UserThreads.append(t)
+    #     time.sleep(0.01)
+    # elif number_user > USER_NO:
+    #     for i,t in enumerate(searchingUserThreads):
+    #         if (i < (add_number_user * (-1))):
+    #         # print("therehere")
+    #         t.stop()
+    #         searchingUserThreads.remove(t)
+    #         time.sleep(0.001)
+
+# for i in range(USER_NO):
+#     t = User()
+#     t.start()
+#     searchingUserThreads.append(t)
+#     time.sleep(0.01)
 
 # time.sleep(1)
 
