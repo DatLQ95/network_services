@@ -30,7 +30,7 @@ image: media-server
 port: 8088
 lb port: 8089
 input request port: 8004
-docker service create --mode global --publish mode=host,target=80,published=8088 --name media_server media-server
+docker service create --mode global --publish mode=host,target=80,published=8088 --publish mode=host,target=1935,published=1935 --name media_server media-server
 
 //TODO: in the image in dockerhub the video is in gitlfs, therefore we need to build locally in each node and then run docker swarm!
 
@@ -71,6 +71,7 @@ ENV PORT_ADDRESS_SHOP_SERVER 8096
 ENV PORT_ADDRESS_WEB_SERVER 8080
 ENV PORT_ADDRESS_MEDIA_SERVER 8088
 
+Create service
 docker service create --mode global --publish mode=host,target=8984,published=8984 \
                                     --publish mode=host,target=8081,published=8081 \
                                     --publish mode=host,target=8097,published=8097 \
@@ -83,6 +84,13 @@ docker service create --mode global --publish mode=host,target=8984,published=89
                                     -e PORT_ADDRESS_SEARCH_LB=8984 -e PORT_ADDRESS_WEB_LB=8081 -e PORT_ADDRESS_SHOP_LB=8097 -e PORT_ADDRESS_MEDIA_LB=8089 \
                                     -e PORT_ADDRESS_SEARCH_SERVER=8983 -e PORT_ADDRESS_SHOP_SERVER=8096 -e PORT_ADDRESS_WEB_SERVER=8080 -e PORT_ADDRESS_MEDIA_SERVER=8088 \
                                     --name load_balancer luongquocdat01091995/network_services:load-balancer 
+
+Update service at each load balancer:
+docker service update --env-add WEIGHT_SEARCH_2=1 --env-add WEIGHT_SEARCH_3=2 --env-add WEIGHT_SEARCH_4=2 \
+                      --env-add WEIGHT_SHOP_2=1 --env-add WEIGHT_SHOP_3=2 --env-add WEIGHT_SHOP_4=2 \
+                      --env-add WEIGHT_WEB_2=1 --env-add WEIGHT_WEB_3=2 --env-add WEIGHT_WEB_4=2 \
+                      --env-add WEIGHT_MEDIA_2=1 --env-add WEIGHT_MEDIA_3=2 --env-add WEIGHT_MEDIA_4=2 \
+                      load_balancer
 
 -------------------------------------------------------------------
 
@@ -121,6 +129,8 @@ ENV PORT_ADDRESS_SHOP_LB 8097
 ENV PORT_ADDRESS_WEB_LB 8081
 ENV PORT_ADDRESS_MEDIA_LB 8089
 
+Create load balancer at each node:
+
 docker service create --mode global --publish mode=host,target=8001,published=8001 \
                                     --publish mode=host,target=8002,published=8002 \
                                     --publish mode=host,target=8003,published=8003 \
@@ -129,10 +139,18 @@ docker service create --mode global --publish mode=host,target=8001,published=80
                                     -e WEIGHT_SHOP_2=1 -e WEIGHT_SHOP_3=2 -e WEIGHT_SHOP_4=2 \
                                     -e WEIGHT_WEB_2=1 -e WEIGHT_WEB_3=2 -e WEIGHT_WEB_4=2 \
                                     -e WEIGHT_MEDIA_2=1 -e WEIGHT_MEDIA_3=2 -e WEIGHT_MEDIA_4=2 \
-                                    -e IP_ADDRESS_NODE_2=131.155.35.52 -e IP_ADDRESS_NODE_3 131.155.35.53 -e IP_ADDRESS_NODE_4 131.155.35.54 \
+                                    -e IP_ADDRESS_NODE_2=131.155.35.52 -e IP_ADDRESS_NODE_3=131.155.35.53 -e IP_ADDRESS_NODE_4=131.155.35.54 \
                                     -e PORT_ADDRESS_SEARCH=8001 -e PORT_ADDRESS_SHOP=8002 -e PORT_ADDRESS_WEB=8003 -e PORT_ADDRESS_MEDIA=8004 \
                                     -e PORT_ADDRESS_SEARCH_LB=8984 -e PORT_ADDRESS_SHOP_LB=8097 -e PORT_ADDRESS_WEB_LB=8081 -e PORT_ADDRESS_MEDIA_LB=8089 \
                                     --name load_balancer_node luongquocdat01091995/network_services:load-balancer-node 
+
+Update service at each node:
+
+docker service update --env-add WEIGHT_SEARCH_2=1 --env-add WEIGHT_SEARCH_3=2 --env-add WEIGHT_SEARCH_4=2 \
+                      --env-add WEIGHT_SHOP_2=1 --env-add WEIGHT_SHOP_3=2 --env-add WEIGHT_SHOP_4=2 \
+                      --env-add WEIGHT_WEB_2=1 --env-add WEIGHT_WEB_3=2 --env-add WEIGHT_WEB_4=2 \
+                      --env-add WEIGHT_MEDIA_2=1 --env-add WEIGHT_MEDIA_3=2 --env-add WEIGHT_MEDIA_4=2 \
+                      load_balancer_node 
 
 -------------------------------------------------------------------
 
@@ -144,10 +162,19 @@ ENV IP_ADDRESS 131.155.35.52
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=2 \
-                      -e IP_ADDRESS=131.155.35.52 \
+Create client:
+
+docker service create --constraint node.labels.node_number==2 \
+                      -e IP_ADDRESS=192.168.3.84 \
                       -e PORT_NUMBER=8001 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name search_client_2 luongquocdat01091995/network_services:service-client
+
+Update client: 
+
+docker service update --constraint node.labels.node_number==2 \
+                      --env-add IP_ADDRESS=131.155.35.52 \
+                      --env-add PORT_NUMBER=8001 \
+                      --env-add USER_NO=100 --env-add MEDIA_SERVICE=0 --name search_client_2
 
 -------------------------------------------------------------------
 
@@ -159,7 +186,7 @@ ENV IP_ADDRESS 131.155.35.52
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=2 \
+docker service create --constraint node.labels.node_number==2 \
                       -e IP_ADDRESS=131.155.35.52 \
                       -e PORT_NUMBER=8002 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name shop_client_2 luongquocdat01091995/network_services:service-client

@@ -5,9 +5,10 @@ import threading
 import os
 import numpy as np
 import subprocess
-import aiohttp
+# import aiohttp
 import requests
 import urllib3
+import sys
 
 from prometheus_client import Histogram
 from prometheus_client import start_http_server, Summary, Counter
@@ -18,10 +19,15 @@ IP_ADDRESS = os.getenv('IP_ADDRESS')
 PORT_NUMBER = os.getenv('PORT_NUMBER')
 USER_NO = os.getenv('USER_NO')
 MEDIA_SERVICE = os.getenv('MEDIA_SERVICE')
-URL = str(IP_ADDRESS) + ":" + str(PORT_NUMBER)
-
+URL = "http://" + IP_ADDRESS + ":" + PORT_NUMBER
+# IP_ADDRESS = "192.168.3.84"
+# PORT_NUMBER = "1935"
+# URL ="http://192.168.3.84:8088/aaa.mp4"
+# URL ="http://131.155.35.53:8088/aaa.mp4"
+# MEDIA_SERVICE = 1
 #Global var:
 number_user = 0
+error = 0
 
 #TODO: this is prometheous code 
 bucks = [(i*50) for i in range(20,100)]
@@ -50,12 +56,19 @@ class User(threading.Thread):
             if self.stopped():
                 return
             if MEDIA_SERVICE == 1: 
-                text = "rtmp://" + str(URL) + "/vod/aaa.mp4"
+                text = "rtmp://" + IP_ADDRESS + ":" + PORT_NUMBER + "/vod/aaa.mp4"
                 run(['ffmpeg',  '-i',  text, '-c:v', 'copy', '-c:a', 'copy', '-preset:v', 'ultrafast', '-segment_list_flags', '-y', '-t', '50', '-f', 'flv', 'emre.flv', '-y'])  
-                time.sleep(np.random.uniform(low=0.1, high=0.5))
+                time.sleep(0.5)
             else:
-                upool.request('GET',URL)
-                time.sleep(np.random.exponential(30))
+                try:
+                    upool.request('GET',URL)
+                    time.sleep(np.random.uniform(low=0.1, high=0.5))
+                except:
+                    print("err: ", sys.exc_info()[0])
+                    error = error + 1
+                    print("error: " + str(error))
+
+                # time.sleep(np.random.exponential(30))
 
 class UserTestMeasure(threading.Thread):
     def __init__(self):
@@ -74,11 +87,12 @@ class UserTestMeasure(threading.Thread):
                 return
             if MEDIA_SERVICE == 1: 
                 # TODO: find the way to measure the reponse latency from media?
-                text = "rtmp://" + str(URL) + "/vod/aaa.mp4"
-                run(['ffmpeg',  '-i',  text, '-c:v', 'copy', '-c:a', 'copy', '-preset:v', 'ultrafast', '-segment_list_flags', '-y', '-t', '50', '-f', 'flv', 'emre.flv', '-y'])  
+                text = "rtmp://" + IP_ADDRESS + ":" + PORT_NUMBER + "/vod/aaa.mp4"
+                # run(['ffmpeg',  '-i',  text, '-c:v', 'copy', '-c:a', 'copy', '-preset:v', 'ultrafast', '-segment_list_flags', '+live', '-y', '-f', 'flv', 'emre.flv', '-y'])  
+                run(['ffmpeg',  '-i',  text, '-c:v', 'copy', '-c:a', 'copy', '-segment_list_flags', '+live', '-y', '-f', 'flv', 'emre.flv', '-y'])
                 time.sleep(np.random.uniform(low=0.1, high=0.5))
             else:
-                r =requests.get(URL)
+                r = requests.get(URL)
                 h.observe(r.elapsed.microseconds)
                 time.sleep(1)
 
@@ -89,7 +103,7 @@ t.start()
 UserThreads = []
 while True: 
     USER_NO = os.getenv('USER_NO')
-    add_number_user = number_user - USER_NO
+    add_number_user = int(str(USER_NO)) - number_user
     # add or remove users
     if(add_number_user > 0):
         for i in range(add_number_user):
@@ -100,11 +114,12 @@ while True:
     elif(add_number_user < 0):
         for i,t in enumerate(UserThreads):
             if (i < (add_number_user * (-1))):
-                # print("therehere")
                 t.stop()
                 UserThreads.remove(t)
                 time.sleep(0.01)
-    number_user = USER_NO
+    number_user = int(str(USER_NO))
+    print(number_user)
+
     # # sleep for 1 min
     # time.sleep(20)
     # if number_user < USER_NO:
@@ -160,4 +175,3 @@ while True:
 #                 print(len(searchingUserThreads))
 #                 # sleep for 1 min
 #                 time.sleep(20)
-
