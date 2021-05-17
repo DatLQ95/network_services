@@ -1,3 +1,40 @@
+# Guide line #
+
+## Set up env before running the RL Agent##
+
+1. Run start-up.sh file to update all the images in each node. 
+2. Build the image-server locally in each node.
+3. Create servers using docker swarm.
+4. Create load balancer using docker swarm.
+5. Create node load balancer using docker swarm. 
+6. Create the service client containers
+7. Start all containers and wait for them to stablize. 
+
+## Reset environment ##
+### Init the environment, start all over again. ###
+1. Set number user for each client services in each ingress nodes to start point.
+2. Run all client services containers.
+3. Wait for the container to be stable. (appx = 5 sec)
+4. Run the client containers with initial user number.
+5. Capture and return the observe bandwidth ingress from each node.
+
+## Apply action (step) ##
+
+1. Get the action space / action array from Agent RL.
+2. Apply action: -> Docker swarm update
+- Change the number of user of each service according to running time -> Docker Swarm Update 
+- Change the weight accordingly -> Docker Swarm Update
+3. Capture at same time: -> Prometheous + Netdata ( or other tool to collect container traffic info)
+- Capture bandwidth value at each ingress node for each service (after time t2) -> netdata 
+- Capture latency for each services. -> Prometheous in each client container
+- Capture packet loss (if possible). -> Netdata in each client container
+4. Calculate reward.
+5. Normalize the observe space: traffic ingress during the time (BW of each service) + node load in each node (BW in each link).
+6. Return new observation + reward.
+
+## Container descriptions ##
+-------------------------------------------------------------------
+
 container: search_server 
 image: search-server
 port: 8983
@@ -41,56 +78,97 @@ image: load-balancer
 port: 8984, 8081, 8097, 8089
 env vars:
 
-ENV WEIGHT_SEARCH_LB_2 1
-ENV WEIGHT_SEARCH_LB_3 2
-ENV WEIGHT_SEARCH_LB_4 3
+ENV WEIGHT_SEARCH_2 1
+ENV WEIGHT_SEARCH_3 2
+ENV WEIGHT_SEARCH_4 3
 
-ENV WEIGHT_SHOP_LB_2 1
-ENV WEIGHT_SHOP_LB_3 2
-ENV WEIGHT_SHOP_LB_4 3
+ENV WEIGHT_SHOP_2 1
+ENV WEIGHT_SHOP_3 2
+ENV WEIGHT_SHOP_4 3
 
-ENV WEIGHT_WEB_LB_2 1
-ENV WEIGHT_WEB_LB_3 2
-ENV WEIGHT_WEB_LB_4 3
+ENV WEIGHT_WEB_2 1
+ENV WEIGHT_WEB_3 2
+ENV WEIGHT_WEB_4 3
 
-ENV WEIGHT_MEDIA_LB_2 1
-ENV WEIGHT_MEDIA_LB_3 2
-ENV WEIGHT_MEDIA_LB_4 3
+ENV WEIGHT_WEB_2 1
+ENV WEIGHT_WEB_3 2
+ENV WEIGHT_WEB_4 3
 
-ENV IP_ADDRESS_NODE_2 131.155.35.52
-ENV IP_ADDRESS_NODE_3 131.155.35.53
-ENV IP_ADDRESS_NODE_4 131.155.35.54
+ENV IP_ADDRESS_NODE_2 192.168.3.74
+ENV IP_ADDRESS_NODE_3 192.168.3.84
+ENV IP_ADDRESS_NODE_4 192.168.3.94
 
-ENV PORT_ADDRESS_SEARCH_LB 8984
-ENV PORT_ADDRESS_SHOP_LB 8097
-ENV PORT_ADDRESS_WEB_LB 8081
-ENV PORT_ADDRESS_MEDIA_LB 8089
+ENV PORT_ADDRESS_SEARCH_LISTEN 8984
+ENV PORT_ADDRESS_SHOP_LISTEN 8097
+ENV PORT_ADDRESS_WEB_LISTEN 8081
+ENV PORT_ADDRESS_MEDIA_LISTEN 8089
 
-ENV PORT_ADDRESS_SEARCH_SERVER 8983
-ENV PORT_ADDRESS_SHOP_SERVER 8096
-ENV PORT_ADDRESS_WEB_SERVER 8080
-ENV PORT_ADDRESS_MEDIA_SERVER 8088
+ENV PORT_ADDRESS_SEARCH_FORWARD 8983
+ENV PORT_ADDRESS_SHOP_FORWARD 8096
+ENV PORT_ADDRESS_WEB_FORWARD 8080
+ENV PORT_ADDRESS_MEDIA_FORWARD 8088
 
-Create service
-docker service create --mode global --publish mode=host,target=8984,published=8984 \
+Create service for each node:
+docker service create --constraint node.labels.node_number==2 \
+                                    --publish mode=host,target=8984,published=8984 \
                                     --publish mode=host,target=8081,published=8081 \
                                     --publish mode=host,target=8097,published=8097 \
                                     --publish mode=host,target=8089,published=8089 \
-                                    -e WEIGHT_SEARCH_LB_2=1 -e WEIGHT_SEARCH_LB_3=2 -e WEIGHT_SEARCH_LB_4=2 \
-                                    -e WEIGHT_SHOP_LB_2=1 -e WEIGHT_SHOP_LB_3=2 -e WEIGHT_SHOP_LB_4=2 \
-                                    -e WEIGHT_WEB_LB_2=1 -e WEIGHT_WEB_LB_3=2 -e WEIGHT_WEB_LB_4=2 \
-                                    -e WEIGHT_MEDIA_LB_2=1 -e WEIGHT_MEDIA_LB_3=2 -e WEIGHT_MEDIA_LB_4=2 \
-                                    -e IP_ADDRESS_NODE_2=131.155.35.52 -e IP_ADDRESS_NODE_3=131.155.35.53 -e IP_ADDRESS_NODE_4=131.155.35.54 \
-                                    -e PORT_ADDRESS_SEARCH_LB=8984 -e PORT_ADDRESS_WEB_LB=8081 -e PORT_ADDRESS_SHOP_LB=8097 -e PORT_ADDRESS_MEDIA_LB=8089 \
-                                    -e PORT_ADDRESS_SEARCH_SERVER=8983 -e PORT_ADDRESS_SHOP_SERVER=8096 -e PORT_ADDRESS_WEB_SERVER=8080 -e PORT_ADDRESS_MEDIA_SERVER=8088 \
-                                    --name load_balancer luongquocdat01091995/network_services:load-balancer 
+                                    -e WEIGHT_SEARCH_2=1 -e WEIGHT_SEARCH_3=2 -e WEIGHT_SEARCH_4=2 \
+                                    -e WEIGHT_SHOP_2=1 -e WEIGHT_SHOP_3=2 -e WEIGHT_SHOP_4=2 \
+                                    -e WEIGHT_WEB_2=1 -e WEIGHT_WEB_3=2 -e WEIGHT_WEB_4=2 \
+                                    -e WEIGHT_WEB_2=1 -e WEIGHT_WEB_3=2 -e WEIGHT_WEB_4=2 \
+                                    -e IP_ADDRESS_NODE_2=192.168.3.74 -e IP_ADDRESS_NODE_3=192.168.3.84 -e IP_ADDRESS_NODE_4=192.168.3.94 \
+                                    -e PORT_ADDRESS_SEARCH_LISTEN=8984 -e PORT_ADDRESS_SHOP_LISTEN=8097 -e PORT_ADDRESS_WEB_LISTEN=8081 -e PORT_ADDRESS_MEDIA_LISTEN=8089 \
+                                    -e PORT_ADDRESS_SEARCH_FORWARD=8983 -e PORT_ADDRESS_SHOP_FORWARD=8096 -e PORT_ADDRESS_WEB_FORWARD=8080 -e PORT_ADDRESS_MEDIA_FORWARD=8088 \
+                                    --name load_balancer_2 luongquocdat01091995/network_services:load-balancer-general
+
+docker service create --constraint node.labels.node_number==3 \
+                                    --publish mode=host,target=8984,published=8984 \
+                                    --publish mode=host,target=8081,published=8081 \
+                                    --publish mode=host,target=8097,published=8097 \
+                                    --publish mode=host,target=8089,published=8089 \
+                                    -e WEIGHT_SEARCH_2=1 -e WEIGHT_SEARCH_3=2 -e WEIGHT_SEARCH_4=2 \
+                                    -e WEIGHT_SHOP_2=1 -e WEIGHT_SHOP_3=2 -e WEIGHT_SHOP_4=2 \
+                                    -e WEIGHT_WEB_2=1 -e WEIGHT_WEB_3=2 -e WEIGHT_WEB_4=2 \
+                                    -e WEIGHT_WEB_2=1 -e WEIGHT_WEB_3=2 -e WEIGHT_WEB_4=2 \
+                                    -e IP_ADDRESS_NODE_2=192.168.3.74 -e IP_ADDRESS_NODE_3=192.168.3.84 -e IP_ADDRESS_NODE_4=192.168.3.94 \
+                                    -e PORT_ADDRESS_SEARCH_LISTEN=8984 -e PORT_ADDRESS_SHOP_LISTEN=8097 -e PORT_ADDRESS_WEB_LISTEN=8081 -e PORT_ADDRESS_MEDIA_LISTEN=8089 \
+                                    -e PORT_ADDRESS_SEARCH_FORWARD=8983 -e PORT_ADDRESS_SHOP_FORWARD=8096 -e PORT_ADDRESS_WEB_FORWARD=8080 -e PORT_ADDRESS_MEDIA_FORWARD=8088 \
+                                    --name load_balancer_3 luongquocdat01091995/network_services:load-balancer-general
+
+docker service create --constraint node.labels.node_number==4 \
+                                    --publish mode=host,target=8984,published=8984 \
+                                    --publish mode=host,target=8081,published=8081 \
+                                    --publish mode=host,target=8097,published=8097 \
+                                    --publish mode=host,target=8089,published=8089 \
+                                    -e WEIGHT_SEARCH_2=1 -e WEIGHT_SEARCH_3=2 -e WEIGHT_SEARCH_4=2 \
+                                    -e WEIGHT_SHOP_2=1 -e WEIGHT_SHOP_3=2 -e WEIGHT_SHOP_4=2 \
+                                    -e WEIGHT_WEB_2=1 -e WEIGHT_WEB_3=2 -e WEIGHT_WEB_4=2 \
+                                    -e WEIGHT_WEB_2=1 -e WEIGHT_WEB_3=2 -e WEIGHT_WEB_4=2 \
+                                    -e IP_ADDRESS_NODE_2=192.168.3.74 -e IP_ADDRESS_NODE_3=192.168.3.84 -e IP_ADDRESS_NODE_4=192.168.3.94 \
+                                    -e PORT_ADDRESS_SEARCH_LISTEN=8984 -e PORT_ADDRESS_SHOP_LISTEN=8097 -e PORT_ADDRESS_WEB_LISTEN=8081 -e PORT_ADDRESS_MEDIA_LISTEN=8089 \
+                                    -e PORT_ADDRESS_SEARCH_FORWARD=8983 -e PORT_ADDRESS_SHOP_FORWARD=8096 -e PORT_ADDRESS_WEB_FORWARD=8080 -e PORT_ADDRESS_MEDIA_FORWARD=8088 \
+                                    --name load_balancer_4 luongquocdat01091995/network_services:load-balancer-general 
 
 Update service at each load balancer:
+docker service update --env-add WEIGHT_SEARCH_2=1 --env-add WEIGHT_SEARCH_3=2 --env-add WEIGHT_SEARCH_4=0 \
+                      --env-add WEIGHT_SHOP_2=1 --env-add WEIGHT_SHOP_3=2 --env-add WEIGHT_SHOP_4=2 \
+                      --env-add WEIGHT_WEB_2=1 --env-add WEIGHT_WEB_3=2 --env-add WEIGHT_WEB_4=2 \
+                      --env-add WEIGHT_MEDIA_2=1 --env-add WEIGHT_MEDIA_3=2 --env-add WEIGHT_MEDIA_4=2 \
+                      load_balancer_2
+
 docker service update --env-add WEIGHT_SEARCH_2=1 --env-add WEIGHT_SEARCH_3=2 --env-add WEIGHT_SEARCH_4=2 \
                       --env-add WEIGHT_SHOP_2=1 --env-add WEIGHT_SHOP_3=2 --env-add WEIGHT_SHOP_4=2 \
                       --env-add WEIGHT_WEB_2=1 --env-add WEIGHT_WEB_3=2 --env-add WEIGHT_WEB_4=2 \
                       --env-add WEIGHT_MEDIA_2=1 --env-add WEIGHT_MEDIA_3=2 --env-add WEIGHT_MEDIA_4=2 \
-                      load_balancer
+                      load_balancer_3
+
+docker service update --env-add WEIGHT_SEARCH_2=1 --env-add WEIGHT_SEARCH_3=2 --env-add WEIGHT_SEARCH_4=2 \
+                      --env-add WEIGHT_SHOP_2=1 --env-add WEIGHT_SHOP_3=2 --env-add WEIGHT_SHOP_4=2 \
+                      --env-add WEIGHT_WEB_2=1 --env-add WEIGHT_WEB_3=2 --env-add WEIGHT_WEB_4=2 \
+                      --env-add WEIGHT_MEDIA_2=1 --env-add WEIGHT_MEDIA_3=2 --env-add WEIGHT_MEDIA_4=2 \
+                      load_balancer_4
 
 -------------------------------------------------------------------
 
@@ -115,23 +193,24 @@ ENV WEIGHT_MEDIA_2 1
 ENV WEIGHT_MEDIA_3 2
 ENV WEIGHT_MEDIA_4 3
 
-ENV IP_ADDRESS_NODE_2 131.155.35.52
-ENV IP_ADDRESS_NODE_3 131.155.35.53
-ENV IP_ADDRESS_NODE_4 131.155.35.54
+ENV IP_ADDRESS_NODE_2 192.168.3.74
+ENV IP_ADDRESS_NODE_3 192.168.3.84
+ENV IP_ADDRESS_NODE_4 192.168.3.94
 
-ENV PORT_ADDRESS_SEARCH 8001
-ENV PORT_ADDRESS_SHOP 8002
-ENV PORT_ADDRESS_WEB 8003
-ENV PORT_ADDRESS_MEDIA 8004
+ENV PORT_ADDRESS_SEARCH_LISTEN 8001
+ENV PORT_ADDRESS_SHOP_LISTEN 8002
+ENV PORT_ADDRESS_WEB_LISTEN 8003
+ENV PORT_ADDRESS_MEDIA_LISTEN 8004
 
-ENV PORT_ADDRESS_SEARCH_LB 8984
-ENV PORT_ADDRESS_SHOP_LB 8097
-ENV PORT_ADDRESS_WEB_LB 8081
-ENV PORT_ADDRESS_MEDIA_LB 8089
+ENV PORT_ADDRESS_SEARCH_FORWARD 8984
+ENV PORT_ADDRESS_SHOP_FORWARD 8097
+ENV PORT_ADDRESS_WEB_FORWARD 8081
+ENV PORT_ADDRESS_MEDIA_FORWARD 8089
 
 Create load balancer at each node:
 
-docker service create --mode global --publish mode=host,target=8001,published=8001 \
+docker service create --constraint node.labels.node_number==2 \
+                                     --publish mode=host,target=8001,published=8001 \
                                     --publish mode=host,target=8002,published=8002 \
                                     --publish mode=host,target=8003,published=8003 \
                                     --publish mode=host,target=8004,published=8004 \
@@ -139,18 +218,58 @@ docker service create --mode global --publish mode=host,target=8001,published=80
                                     -e WEIGHT_SHOP_2=1 -e WEIGHT_SHOP_3=2 -e WEIGHT_SHOP_4=2 \
                                     -e WEIGHT_WEB_2=1 -e WEIGHT_WEB_3=2 -e WEIGHT_WEB_4=2 \
                                     -e WEIGHT_MEDIA_2=1 -e WEIGHT_MEDIA_3=2 -e WEIGHT_MEDIA_4=2 \
-                                    -e IP_ADDRESS_NODE_2=131.155.35.52 -e IP_ADDRESS_NODE_3=131.155.35.53 -e IP_ADDRESS_NODE_4=131.155.35.54 \
-                                    -e PORT_ADDRESS_SEARCH=8001 -e PORT_ADDRESS_SHOP=8002 -e PORT_ADDRESS_WEB=8003 -e PORT_ADDRESS_MEDIA=8004 \
-                                    -e PORT_ADDRESS_SEARCH_LB=8984 -e PORT_ADDRESS_SHOP_LB=8097 -e PORT_ADDRESS_WEB_LB=8081 -e PORT_ADDRESS_MEDIA_LB=8089 \
-                                    --name load_balancer_node luongquocdat01091995/network_services:load-balancer-node 
+                                    -e IP_ADDRESS_NODE_2=192.168.3.74 -e IP_ADDRESS_NODE_3=192.168.3.84 -e IP_ADDRESS_NODE_4=192.168.3.94 \
+                                    -e PORT_ADDRESS_SEARCH_LISTEN=8001 -e PORT_ADDRESS_SHOP_LISTEN=8002 -e PORT_ADDRESS_WEB_LISTEN=8003 -e PORT_ADDRESS_MEDIA_LISTEN=8004 \
+                                    -e PORT_ADDRESS_SEARCH_FORWARD=8984 -e PORT_ADDRESS_SHOP_FORWARD=8097 -e PORT_ADDRESS_WEB_FORWARD=8081 -e PORT_ADDRESS_MEDIA_FORWARD=8089 \
+                                    --name load_balancer_node_2 luongquocdat01091995/network_services:load-balancer-general  
+
+docker service create --constraint node.labels.node_number==3 \
+                                     --publish mode=host,target=8001,published=8001 \
+                                    --publish mode=host,target=8002,published=8002 \
+                                    --publish mode=host,target=8003,published=8003 \
+                                    --publish mode=host,target=8004,published=8004 \
+                                    -e WEIGHT_SEARCH_2=1 -e WEIGHT_SEARCH_3=2 -e WEIGHT_SEARCH_4=2 \
+                                    -e WEIGHT_SHOP_2=1 -e WEIGHT_SHOP_3=2 -e WEIGHT_SHOP_4=2 \
+                                    -e WEIGHT_WEB_2=1 -e WEIGHT_WEB_3=2 -e WEIGHT_WEB_4=2 \
+                                    -e WEIGHT_MEDIA_2=1 -e WEIGHT_MEDIA_3=2 -e WEIGHT_MEDIA_4=2 \
+                                    -e IP_ADDRESS_NODE_2=192.168.3.74 -e IP_ADDRESS_NODE_3=192.168.3.84 -e IP_ADDRESS_NODE_4=192.168.3.94 \
+                                    -e PORT_ADDRESS_SEARCH_LISTEN=8001 -e PORT_ADDRESS_SHOP_LISTEN=8002 -e PORT_ADDRESS_WEB_LISTEN=8003 -e PORT_ADDRESS_MEDIA_LISTEN=8004 \
+                                    -e PORT_ADDRESS_SEARCH_FORWARD=8984 -e PORT_ADDRESS_SHOP_FORWARD=8097 -e PORT_ADDRESS_WEB_FORWARD=8081 -e PORT_ADDRESS_MEDIA_FORWARD=8089 \
+                                    --name load_balancer_node_3 luongquocdat01091995/network_services:load-balancer-general 
+
+docker service create --constraint node.labels.node_number==4 \
+                                     --publish mode=host,target=8001,published=8001 \
+                                    --publish mode=host,target=8002,published=8002 \
+                                    --publish mode=host,target=8003,published=8003 \
+                                    --publish mode=host,target=8004,published=8004 \
+                                    -e WEIGHT_SEARCH_2=1 -e WEIGHT_SEARCH_3=2 -e WEIGHT_SEARCH_4=2 \
+                                    -e WEIGHT_SHOP_2=1 -e WEIGHT_SHOP_3=2 -e WEIGHT_SHOP_4=2 \
+                                    -e WEIGHT_WEB_2=1 -e WEIGHT_WEB_3=2 -e WEIGHT_WEB_4=2 \
+                                    -e WEIGHT_MEDIA_2=1 -e WEIGHT_MEDIA_3=2 -e WEIGHT_MEDIA_4=2 \
+                                    -e IP_ADDRESS_NODE_2=192.168.3.74 -e IP_ADDRESS_NODE_3=192.168.3.84 -e IP_ADDRESS_NODE_4=192.168.3.94 \
+                                    -e PORT_ADDRESS_SEARCH_LISTEN=8001 -e PORT_ADDRESS_SHOP_LISTEN=8002 -e PORT_ADDRESS_WEB_LISTEN=8003 -e PORT_ADDRESS_MEDIA_LISTEN=8004 \
+                                    -e PORT_ADDRESS_SEARCH_FORWARD=8984 -e PORT_ADDRESS_SHOP_FORWARD=8097 -e PORT_ADDRESS_WEB_FORWARD=8081 -e PORT_ADDRESS_MEDIA_FORWARD=8089 \
+                                    --name load_balancer_node_4 luongquocdat01091995/network_services:load-balancer-general 
 
 Update service at each node:
+
+docker service update --env-add WEIGHT_SEARCH_2=1 --env-add WEIGHT_SEARCH_3=2 --env-add WEIGHT_SEARCH_4=4 \
+                      --env-add WEIGHT_SHOP_2=1 --env-add WEIGHT_SHOP_3=2 --env-add WEIGHT_SHOP_4=2 \
+                      --env-add WEIGHT_WEB_2=1 --env-add WEIGHT_WEB_3=2 --env-add WEIGHT_WEB_4=2 \
+                      --env-add WEIGHT_MEDIA_2=1 --env-add WEIGHT_MEDIA_3=2 --env-add WEIGHT_MEDIA_4=2 \
+                      load_balancer_node_2
 
 docker service update --env-add WEIGHT_SEARCH_2=1 --env-add WEIGHT_SEARCH_3=2 --env-add WEIGHT_SEARCH_4=2 \
                       --env-add WEIGHT_SHOP_2=1 --env-add WEIGHT_SHOP_3=2 --env-add WEIGHT_SHOP_4=2 \
                       --env-add WEIGHT_WEB_2=1 --env-add WEIGHT_WEB_3=2 --env-add WEIGHT_WEB_4=2 \
                       --env-add WEIGHT_MEDIA_2=1 --env-add WEIGHT_MEDIA_3=2 --env-add WEIGHT_MEDIA_4=2 \
-                      load_balancer_node 
+                      load_balancer_node_3
+
+docker service update --env-add WEIGHT_SEARCH_2=1 --env-add WEIGHT_SEARCH_3=2 --env-add WEIGHT_SEARCH_4=2 \
+                      --env-add WEIGHT_SHOP_2=1 --env-add WEIGHT_SHOP_3=2 --env-add WEIGHT_SHOP_4=2 \
+                      --env-add WEIGHT_WEB_2=1 --env-add WEIGHT_WEB_3=2 --env-add WEIGHT_WEB_4=2 \
+                      --env-add WEIGHT_MEDIA_2=1 --env-add WEIGHT_MEDIA_3=2 --env-add WEIGHT_MEDIA_4=2 \
+                      load_balancer_node_4               
 
 -------------------------------------------------------------------
 
@@ -158,23 +277,21 @@ container: search_client_2
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.52
+ENV IP_ADDRESS 192.168.3.74
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
 Create client:
 
 docker service create --constraint node.labels.node_number==2 \
-                      -e IP_ADDRESS=192.168.3.84 \
+                      -e IP_ADDRESS=192.168.3.74 \
                       -e PORT_NUMBER=8001 \
+                      --publish mode=host,target=8101,published=8101 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name search_client_2 luongquocdat01091995/network_services:service-client
 
 Update client: 
 
-docker service update --constraint node.labels.node_number==2 \
-                      --env-add IP_ADDRESS=131.155.35.52 \
-                      --env-add PORT_NUMBER=8001 \
-                      --env-add USER_NO=100 --env-add MEDIA_SERVICE=0 --name search_client_2
+docker service update --env-add USER_NO=60 search_client_2
 
 -------------------------------------------------------------------
 
@@ -182,14 +299,21 @@ container: shop_client_2
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.52
+ENV IP_ADDRESS 192.168.3.74
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
+Create client:
+
 docker service create --constraint node.labels.node_number==2 \
-                      -e IP_ADDRESS=131.155.35.52 \
+                      -e IP_ADDRESS=192.168.3.74 \
                       -e PORT_NUMBER=8002 \
+                      --publish mode=host,target=8102,published=8102 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name shop_client_2 luongquocdat01091995/network_services:service-client
+
+Update client: 
+
+docker service update --env-add USER_NO=100 shop_client_2
 
 -------------------------------------------------------------------
 
@@ -197,14 +321,17 @@ container: web_client_2
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.52
+ENV IP_ADDRESS 192.168.3.74
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=2 \
-                      -e IP_ADDRESS=131.155.35.52 \
+docker service create --constraint node.labels.node_number==2 \
+                      -e IP_ADDRESS=192.168.3.74 \
                       -e PORT_NUMBER=8003 \
+                      --publish mode=host,target=8103,published=8103 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name web_client_2 luongquocdat01091995/network_services:service-client
+
+docker service update --env-add USER_NO=100 web_client_2
 
 -------------------------------------------------------------------
 
@@ -212,14 +339,17 @@ container: media_client_2
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.52
+ENV IP_ADDRESS 192.168.3.74
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=2 \
-                      -e IP_ADDRESS=131.155.35.52 \
+docker service create --constraint node.labels.node_number==2 \
+                      -e IP_ADDRESS=192.168.3.74 \
                       -e PORT_NUMBER=8004 \
-                      -e USER_NO=100 -e MEDIA_SERVICE=0 --name media_client_2 luongquocdat01091995/network_services:service-client
+                      --publish mode=host,target=8104,published=8104 \
+                      -e USER_NO=100 -e MEDIA_SERVICE=1 --name media_client_2 luongquocdat01091995/network_services:service-client
+
+docker service update --env-add USER_NO=100 media_client_2
 
 -------------------------------------------------------------------
 
@@ -227,14 +357,17 @@ container: search_client_3
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.53
+ENV IP_ADDRESS 192.168.3.84
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=3 \
-                      -e IP_ADDRESS=131.155.35.53 \
+docker service create --constraint node.labels.node_number==3 \
+                      -e IP_ADDRESS=192.168.3.84 \
                       -e PORT_NUMBER=8001 \
+                      --publish mode=host,target=8101,published=8101 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name search_client_3 luongquocdat01091995/network_services:service-client
+
+docker service update --env-add USER_NO=100 search_client_3
 
 -------------------------------------------------------------------
 
@@ -242,14 +375,17 @@ container: shop_client_3
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.53
+ENV IP_ADDRESS 192.168.3.84
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=3 \
-                      -e IP_ADDRESS=131.155.35.53 \
+docker service create --constraint node.labels.node_number==3 \
+                      -e IP_ADDRESS=192.168.3.84 \
                       -e PORT_NUMBER=8002 \
+                      --publish mode=host,target=8102,published=8102 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name shop_client_3 luongquocdat01091995/network_services:service-client
+
+docker service update --env-add USER_NO=100 shop_client_3
 
 -------------------------------------------------------------------
 
@@ -257,14 +393,17 @@ container: web_client_3
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.53
+ENV IP_ADDRESS 192.168.3.84
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=3 \
-                      -e IP_ADDRESS=131.155.35.53 \
+docker service create --constraint node.labels.node_number==3 \
+                      -e IP_ADDRESS=192.168.3.84 \
                       -e PORT_NUMBER=8003 \
+                      --publish mode=host,target=8103,published=8103 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name web_client_3 luongquocdat01091995/network_services:service-client
+
+docker service update --env-add USER_NO=100 web_client_3
 
 -------------------------------------------------------------------
 
@@ -272,14 +411,17 @@ container: media_client_3
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.53
+ENV IP_ADDRESS 192.168.3.84
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=3 \
-                      -e IP_ADDRESS=131.155.35.53 \
+docker service create --constraint node.labels.node_number==3 \
+                      -e IP_ADDRESS=192.168.3.84 \
                       -e PORT_NUMBER=8004 \
-                      -e USER_NO=100 -e MEDIA_SERVICE=0 --name media_client_3 luongquocdat01091995/network_services:service-client
+                      --publish mode=host,target=8104,published=8104 \
+                      -e USER_NO=100 -e MEDIA_SERVICE=1 --name media_client_3 luongquocdat01091995/network_services:service-client
+
+docker service update --env-add USER_NO=100 media_client_3
 
 -------------------------------------------------------------------
 
@@ -287,14 +429,17 @@ container: search_client_4
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.54
+ENV IP_ADDRESS 192.168.3.94
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=4 \
-                      -e IP_ADDRESS=131.155.35.53 \
+docker service create --constraint node.labels.node_number==4 \
+                      -e IP_ADDRESS=192.168.3.94 \
                       -e PORT_NUMBER=8001 \
+                      --publish mode=host,target=8101,published=8101 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name search_client_4 luongquocdat01091995/network_services:service-client
+
+docker service update --env-add USER_NO=100 search_client_4
 
 -------------------------------------------------------------------
 
@@ -302,14 +447,17 @@ container: shop_client_4
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.54
+ENV IP_ADDRESS 192.168.3.94
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=4 \
-                      -e IP_ADDRESS=131.155.35.53 \
+docker service create --constraint node.labels.node_number==4 \
+                      -e IP_ADDRESS=192.168.3.94 \
                       -e PORT_NUMBER=8002 \
+                      --publish mode=host,target=8102,published=8102 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name shop_client_4 luongquocdat01091995/network_services:service-client
+
+docker service update --env-add USER_NO=100 shop_client_4
 
 -------------------------------------------------------------------
 
@@ -317,14 +465,21 @@ container: web_client_4
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.54
+ENV IP_ADDRESS 192.168.3.94
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=4 \
-                      -e IP_ADDRESS=131.155.35.53 \
+create service:
+
+docker service create --constraint node.labels.node_number==4 \
+                      -e IP_ADDRESS=192.168.3.94 \
                       -e PORT_NUMBER=8003 \
+                      --publish mode=host,target=8103,published=8103 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name web_client_4 luongquocdat01091995/network_services:service-client
+
+update service:
+
+docker service update --env-add USER_NO=50 web_client_4
 
 -------------------------------------------------------------------
 
@@ -332,11 +487,14 @@ container: media_client_4
 image: service-client
 env vars:
 
-ENV IP_ADDRESS 131.155.35.54
+ENV IP_ADDRESS 192.168.3.94
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
-docker service create --constraint node.labels.node_number=4 \
-                      -e IP_ADDRESS=131.155.35.53 \
+docker service create --constraint node.labels.node_number==4 \
+                      -e IP_ADDRESS=192.168.3.94 \
                       -e PORT_NUMBER=8004 \
-                      -e USER_NO=100 -e MEDIA_SERVICE=0 --name media_client_4 luongquocdat01091995/network_services:service-client
+                      --publish mode=host,target=8104,published=8104 \
+                      -e USER_NO=100 -e MEDIA_SERVICE=1 --name media_client_4 luongquocdat01091995/network_services:service-client
+
+docker service update --env-add USER_NO=100 media_client_4

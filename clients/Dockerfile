@@ -18,4 +18,5 @@ ENV PORT_NUMBER 8001
 ENV USER_NO 100
 ENV MEDIA_SERVICE 0
 
+
 CMD [ "python3", "client.py", "--host=0.0.0.0"]
