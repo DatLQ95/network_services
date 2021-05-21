@@ -46,6 +46,7 @@ RUN cd /tmp/build/nginx-${NGINX_VERSION} && \
         --with-http_ssl_module \
         --with-threads \
 		--with-http_mp4_module \
+		--with-http_stub_status_module \
         --add-module=/tmp/build/nginx-rtmp-module-${NGINX_RTMP_MODULE_VERSION} && \
     make -j $(getconf _NPROCESSORS_ONLN) && \
     make install

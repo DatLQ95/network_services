@@ -1,7 +1,7 @@
 # Guide line #
 
 ## Set up env before running the RL Agent##
-
+1. Set up Prometheous server. 
 1. Run start-up.sh file to update all the images in each node. 
 2. Build the image-server locally in each node.
 3. Create servers using docker swarm.
@@ -68,8 +68,6 @@ port: 8088
 lb port: 8089
 input request port: 8004
 docker service create --mode global --publish mode=host,target=80,published=8088 --publish mode=host,target=1935,published=1935 --name media_server media-server
-
-//TODO: in the image in dockerhub the video is in gitlfs, therefore we need to build locally in each node and then run docker swarm!
 
 -------------------------------------------------------------------
 
@@ -435,8 +433,8 @@ ENV MEDIA_SERVICE 0
 
 docker service create --constraint node.labels.node_number==4 \
                       -e IP_ADDRESS=192.168.3.94 \
-                      -e PORT_NUMBER=8001 \
-                      --publish mode=host,target=8101,published=8101 \
+                      -e PORT_NUMBER=8983 \
+                      --publish mode=host,target=9083,published=9083 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name search_client_4 luongquocdat01091995/network_services:service-client
 
 docker service update --env-add USER_NO=100 search_client_4
@@ -453,8 +451,8 @@ ENV MEDIA_SERVICE 0
 
 docker service create --constraint node.labels.node_number==4 \
                       -e IP_ADDRESS=192.168.3.94 \
-                      -e PORT_NUMBER=8002 \
-                      --publish mode=host,target=8102,published=8102 \
+                      -e PORT_NUMBER=8096 \
+                      --publish mode=host,target=8196,published=8196 \
                       -e USER_NO=100 -e MEDIA_SERVICE=0 --name shop_client_4 luongquocdat01091995/network_services:service-client
 
 docker service update --env-add USER_NO=100 shop_client_4

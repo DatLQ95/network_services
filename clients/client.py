@@ -40,6 +40,7 @@ bucks = [(i*50) for i in range(20,100)]
 h = Histogram('request_latency_seconds', 'Description of histogram', buckets= bucks)
 s = Summary('summary_request_latency_seconds', 'Description of summary')
 err = Counter('my_failures', 'Description of counter')
+number_req = Counter('request_number', 'Description of counter')
 
 upool = urllib3.PoolManager(num_pools=50,  block=False)
 
@@ -62,11 +63,13 @@ class User(threading.Thread):
         while(True):
             if self.stopped():
                 return
+            number_req.inc()
             if MEDIA_SERVICE == 1: 
                 text = "rtmp://" + IP_ADDRESS + ":" + PORT_NUMBER + "/vod/aaa.mp4"
                 run(['ffmpeg',  '-i',  text, '-c:v', 'copy', '-c:a', 'copy', '-preset:v', 'ultrafast', '-segment_list_flags', '-y', '-t', '50', '-f', 'flv', 'emre.flv', '-y'])  
                 time.sleep(0.5)
             else:
+
                 try:
                     r = upool.request('GET',URL)
                     if (r.status != 200):
@@ -77,6 +80,7 @@ class User(threading.Thread):
                     print("err: ", sys.exc_info()[0])
                     error = error + 1
                     print("error: " + str(error))
+                
                 time.sleep(0.5)
                 # time.sleep(np.random.uniform(low=0.1, high=0.5))
                 # time.sleep(np.random.exponential(30))
