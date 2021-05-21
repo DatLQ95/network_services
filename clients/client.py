@@ -137,4 +137,5 @@ if __name__ == '__main__':
                     UserThreads.remove(t)
                     time.sleep(0.01)
         number_user = int(str(USER_NO))
+        time.sleep(0.1)
         pass

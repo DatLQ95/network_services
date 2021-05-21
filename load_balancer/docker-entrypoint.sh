@@ -21,15 +21,15 @@ sed -i "s/___IP_ADDRESS_NODE_2___/$IP_ADDRESS_NODE_2/g" /etc/nginx/nginx.conf
 sed -i "s/___IP_ADDRESS_NODE_3___/$IP_ADDRESS_NODE_3/g" /etc/nginx/nginx.conf
 sed -i "s/___IP_ADDRESS_NODE_4___/$IP_ADDRESS_NODE_4/g" /etc/nginx/nginx.conf
 
-sed -i "s/___PORT_ADDRESS_SEARCH_LB___/$PORT_ADDRESS_SEARCH_LB/g" /etc/nginx/nginx.conf
-sed -i "s/___PORT_ADDRESS_SHOP_LB___/$PORT_ADDRESS_SHOP_LB/g" /etc/nginx/nginx.conf
-sed -i "s/___PORT_ADDRESS_WEB_LB___/$PORT_ADDRESS_WEB_LB/g" /etc/nginx/nginx.conf
-sed -i "s/___PORT_ADDRESS_MEDIA_LB___/$PORT_ADDRESS_MEDIA_LB/g" /etc/nginx/nginx.conf
+sed -i "s/___PORT_ADDRESS_SEARCH_LISTEN___/$PORT_ADDRESS_SEARCH_LISTEN/g" /etc/nginx/nginx.conf
+sed -i "s/___PORT_ADDRESS_SHOP_LISTEN___/$PORT_ADDRESS_SHOP_LISTEN/g" /etc/nginx/nginx.conf
+sed -i "s/___PORT_ADDRESS_WEB_LISTEN___/$PORT_ADDRESS_WEB_LISTEN/g" /etc/nginx/nginx.conf
+sed -i "s/___PORT_ADDRESS_MEDIA_LISTEN___/$PORT_ADDRESS_MEDIA_LISTEN/g" /etc/nginx/nginx.conf
 
-sed -i "s/___PORT_ADDRESS_SEARCH_SERVER___/$PORT_ADDRESS_SEARCH_SERVER/g" /etc/nginx/nginx.conf
-sed -i "s/___PORT_ADDRESS_SHOP_SERVER___/$PORT_ADDRESS_SHOP_SERVER/g" /etc/nginx/nginx.conf
-sed -i "s/___PORT_ADDRESS_WEB_SERVER___/$PORT_ADDRESS_WEB_SERVER/g" /etc/nginx/nginx.conf
-sed -i "s/___PORT_ADDRESS_MEDIA_SERVER___/$PORT_ADDRESS_MEDIA_SERVER/g" /etc/nginx/nginx.conf
+sed -i "s/___PORT_ADDRESS_SEARCH_FORWARD___/$PORT_ADDRESS_SEARCH_FORWARD/g" /etc/nginx/nginx.conf
+sed -i "s/___PORT_ADDRESS_SHOP_FORWARD___/$PORT_ADDRESS_SHOP_FORWARD/g" /etc/nginx/nginx.conf
+sed -i "s/___PORT_ADDRESS_WEB_FORWARD___/$PORT_ADDRESS_WEB_FORWARD/g" /etc/nginx/nginx.conf
+sed -i "s/___PORT_ADDRESS_MEDIA_FORWARD___/$PORT_ADDRESS_MEDIA_FORWARD/g" /etc/nginx/nginx.conf
 
 cat /etc/nginx/nginx.conf
 

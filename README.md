@@ -285,7 +285,7 @@ docker service create --constraint node.labels.node_number==2 \
                       -e IP_ADDRESS=192.168.3.74 \
                       -e PORT_NUMBER=8001 \
                       --publish mode=host,target=8101,published=8101 \
-                      -e USER_NO=100 -e MEDIA_SERVICE=0 --name search_client_2 luongquocdat01091995/network_services:service-client
+                      -e USER_NO=100 -e MEDIA_SERVICE=0 --name search_client_2 luongquocdat01091995/service-client
 
 Update client: 
 
