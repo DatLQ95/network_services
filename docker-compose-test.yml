@@ -1,0 +1,320 @@
+version: "3.6"
+
+services:
+  search_server:
+    image: luongquocdat01091995/search-server:latest
+    deploy:
+        mode: global
+    ports:
+      - target: 80
+        published: 8983
+        mode: host 
+  shop_server:
+    image: luongquocdat01091995/shop-server:latest
+    deploy:
+        mode: global
+    ports:
+        - target: 80
+          published: 8080
+          mode: host
+  web_server:
+    image: luongquocdat01091995/web-server:latest
+    deploy:
+        mode: global
+    ports:
+        - target: 80
+          published: 8096
+          mode: host
+#   media-server:
+#     image: media-server
+#     deploy:
+#         mode: global
+#     ports:
+#         - target: 80
+#           published: 8088
+#           mode: host
+#         - target: 1935
+#           published: 1935
+#           mode: host
+  load_balancer_2:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==2"
+    ports:
+        - target: 8984
+          published: 8984
+          mode: host
+        - target: 8081
+          published: 8081
+          mode: host
+        - target: 8097
+          published: 8097
+          mode: host
+        - target: 8089
+          published: 8089
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 2
+        WEIGHT_SEARCH_4: 3
+        WEIGHT_SHOP_2: 2
+        WEIGHT_SHOP_3: 2
+        WEIGHT_SHOP_4: 2
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 2
+        WEIGHT_WEB_4: 2
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 2
+        WEIGHT_MEDIA_4: 2 
+        IPADDRESS_NODE_2: 131.155.35.52
+        IPADDRESS_NODE_3: 131.155.35.53
+        IPADDRESS_NODE_4: 131.155.35.54
+        PORT_ADDRESS_SEARCH_LISTEN: 8984
+        PORT_ADDRESS_SHOP_LISTEN: 8081
+        PORT_ADDRESS_WEB_LISTEN: 8097
+        PORT_ADDRESS_MEDIA_LISTEN: 8089
+        PORT_ADDRESS_SEARCH_FORWARD: 8983
+        PORT_ADDRESS_SHOP_FORWARD: 8080
+        PORT_ADDRESS_WEB_FORWARD: 8096
+        PORT_ADDRESS_MEDIA_FORWARD: 8088
+    
+  load_balancer_3:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==3"
+    ports:
+        - target: 8984
+          published: 8984
+          mode: host
+        - target: 8081
+          published: 8081
+          mode: host
+        - target: 8097
+          published: 8097
+          mode: host
+        - target: 8089
+          published: 8089
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 2
+        WEIGHT_SEARCH_4: 3
+        WEIGHT_SHOP_2: 2
+        WEIGHT_SHOP_3: 2
+        WEIGHT_SHOP_4: 2
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 2
+        WEIGHT_WEB_4: 2
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 2
+        WEIGHT_MEDIA_4: 2 
+        IPADDRESS_NODE_2: 131.155.35.52
+        IPADDRESS_NODE_3: 131.155.35.53
+        IPADDRESS_NODE_4: 131.155.35.54
+        PORT_ADDRESS_SEARCH_LISTEN: 8984
+        PORT_ADDRESS_SHOP_LISTEN: 8081
+        PORT_ADDRESS_WEB_LISTEN: 8097
+        PORT_ADDRESS_MEDIA_LISTEN: 8089
+        PORT_ADDRESS_SEARCH_FORWARD: 8983
+        PORT_ADDRESS_SHOP_FORWARD: 8080
+        PORT_ADDRESS_WEB_FORWARD: 8096
+        PORT_ADDRESS_MEDIA_FORWARD: 8088
+
+  load_balancer_4:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==4"
+    ports:
+        - target: 8984
+          published: 8984
+          mode: host
+        - target: 8081
+          published: 8081
+          mode: host
+        - target: 8097
+          published: 8097
+          mode: host
+        - target: 8089
+          published: 8089
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 2
+        WEIGHT_SEARCH_4: 3
+        WEIGHT_SHOP_2: 2
+        WEIGHT_SHOP_3: 2
+        WEIGHT_SHOP_4: 2
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 2
+        WEIGHT_WEB_4: 2
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 2
+        WEIGHT_MEDIA_4: 2 
+        IPADDRESS_NODE_2: 131.155.35.52
+        IPADDRESS_NODE_3: 131.155.35.53
+        IPADDRESS_NODE_4: 131.155.35.54
+        PORT_ADDRESS_SEARCH_LISTEN: 8984
+        PORT_ADDRESS_SHOP_LISTEN: 8081
+        PORT_ADDRESS_WEB_LISTEN: 8097
+        PORT_ADDRESS_MEDIA_LISTEN: 8089
+        PORT_ADDRESS_SEARCH_FORWARD: 8983
+        PORT_ADDRESS_SHOP_FORWARD: 8080
+        PORT_ADDRESS_WEB_FORWARD: 8096
+        PORT_ADDRESS_MEDIA_FORWARD: 8088
+    
+  load_balancer_node_2:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==2"
+    ports:
+        - target: 8001
+          published: 8001
+          mode: host
+        - target: 8002
+          published: 8002
+          mode: host
+        - target: 8003
+          published: 8003
+          mode: host
+        - target: 8004
+          published: 8004
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 2
+        WEIGHT_SEARCH_4: 3
+        WEIGHT_SHOP_2: 2
+        WEIGHT_SHOP_3: 2
+        WEIGHT_SHOP_4: 2
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 2
+        WEIGHT_WEB_4: 2
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 2
+        WEIGHT_MEDIA_4: 2 
+        IPADDRESS_NODE_2: 131.155.35.52
+        IPADDRESS_NODE_3: 131.155.35.53
+        IPADDRESS_NODE_4: 131.155.35.54
+        PORT_ADDRESS_SEARCH_LISTEN: 8001
+        PORT_ADDRESS_SHOP_LISTEN: 8002
+        PORT_ADDRESS_WEB_LISTEN: 8003
+        PORT_ADDRESS_MEDIA_LISTEN: 8004
+        PORT_ADDRESS_SEARCH_FORWARD: 8984
+        PORT_ADDRESS_SHOP_FORWARD: 8081
+        PORT_ADDRESS_WEB_FORWARD: 8097
+        PORT_ADDRESS_MEDIA_FORWARD: 8089
+
+  load_balancer_node_3:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==3"
+    ports:
+        - target: 8001
+          published: 8001
+          mode: host
+        - target: 8002
+          published: 8002
+          mode: host
+        - target: 8003
+          published: 8003
+          mode: host
+        - target: 8004
+          published: 8004
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 2
+        WEIGHT_SEARCH_4: 3
+        WEIGHT_SHOP_2: 2
+        WEIGHT_SHOP_3: 2
+        WEIGHT_SHOP_4: 2
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 2
+        WEIGHT_WEB_4: 2
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 2
+        WEIGHT_MEDIA_4: 2 
+        IPADDRESS_NODE_2: 131.155.35.52
+        IPADDRESS_NODE_3: 131.155.35.53
+        IPADDRESS_NODE_4: 131.155.35.54
+        PORT_ADDRESS_SEARCH_LISTEN: 8001
+        PORT_ADDRESS_SHOP_LISTEN: 8002
+        PORT_ADDRESS_WEB_LISTEN: 8003
+        PORT_ADDRESS_MEDIA_LISTEN: 8004
+        PORT_ADDRESS_SEARCH_FORWARD: 8984
+        PORT_ADDRESS_SHOP_FORWARD: 8081
+        PORT_ADDRESS_WEB_FORWARD: 8097
+        PORT_ADDRESS_MEDIA_FORWARD: 8089
+
+  load_balancer_node_4:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==4"
+    ports:
+        - target: 8001
+          published: 8001
+          mode: host
+        - target: 8002
+          published: 8002
+          mode: host
+        - target: 8003
+          published: 8003
+          mode: host
+        - target: 8004
+          published: 8004
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 2
+        WEIGHT_SEARCH_4: 3
+        WEIGHT_SHOP_2: 2
+        WEIGHT_SHOP_3: 2
+        WEIGHT_SHOP_4: 2
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 2
+        WEIGHT_WEB_4: 2
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 2
+        WEIGHT_MEDIA_4: 2 
+        IPADDRESS_NODE_2: 131.155.35.52
+        IPADDRESS_NODE_3: 131.155.35.53
+        IPADDRESS_NODE_4: 131.155.35.54
+        PORT_ADDRESS_SEARCH_LISTEN: 8001
+        PORT_ADDRESS_SHOP_LISTEN: 8002
+        PORT_ADDRESS_WEB_LISTEN: 8003
+        PORT_ADDRESS_MEDIA_LISTEN: 8004
+        PORT_ADDRESS_SEARCH_FORWARD: 8984
+        PORT_ADDRESS_SHOP_FORWARD: 8081
+        PORT_ADDRESS_WEB_FORWARD: 8097
+        PORT_ADDRESS_MEDIA_FORWARD: 8089
+
+  search_client_4:
+    image: luongquocdat01091995/service-client:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==4"
+    ports:
+        - target: 8101
+          published: 8101
+          mode: host
+    environment: 
+        IP_ADDRESS: 131.155.35.54
+        PORT_NUMBER: 8001
+        USER_NO: 5
+        MEDIA_SERVICE: 0
+
+#--------------------------------------------------------------
+

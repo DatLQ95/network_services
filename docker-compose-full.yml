@@ -9,43 +9,6 @@ services:
       - target: 80
         published: 8983
         mode: host 
-
-  node_exporter_search_2:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==2"
-    ports:
-        - target: 9113
-          published: 9101
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.52:8983/metrics
-  
-  node_exporter_search_3:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==3"
-    ports:
-        - target: 9113
-          published: 9101
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.53:8983/metrics
-
-  node_exporter_search_4:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==4"
-    ports:
-        - target: 9113
-          published: 9101
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.54:8983/metrics
-  
   shop_server:
     image: luongquocdat01091995/shop-server:latest
     deploy:
@@ -54,43 +17,6 @@ services:
         - target: 80
           published: 8080
           mode: host
-
-  node_exporter_shop_2:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==2"
-    ports:
-        - target: 9113
-          published: 9102
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.52:8080/metrics
-  
-  node_exporter_shop_3:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==3"
-    ports:
-        - target: 9113
-          published: 9102
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.53:8080/metrics
-
-  node_exporter_shop_4:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==4"
-    ports:
-        - target: 9113
-          published: 9102
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.54:8080/metrics
-
   web_server:
     image: luongquocdat01091995/web-server:latest
     deploy:
@@ -99,89 +25,6 @@ services:
         - target: 80
           published: 8096
           mode: host
-
-  node_exporter_web_2:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==2"
-    ports:
-        - target: 9113
-          published: 9103
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.52:8096/metrics
-  
-  node_exporter_web_3:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==3"
-    ports:
-        - target: 9113
-          published: 9103
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.53:8096/metrics
-
-  node_exporter_web_4:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==4"
-    ports:
-        - target: 9113
-          published: 9103
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.54:8096/metrics
-
-  node_exporter_media_2:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==2"
-    ports:
-        - target: 9113
-          published: 9104
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.52:8088/metrics
-  
-  node_exporter_media_3:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==3"
-    ports:
-        - target: 9113
-          published: 9103
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.53:8088/metrics
-
-  node_exporter_media_4:
-    image: nginx/nginx-prometheus-exporter:0.9.0
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==4"
-    ports:
-        - target: 9113
-          published: 9104
-          mode: host
-    command: -nginx.scrape-uri=http://131.155.35.54:8088/metrics
-
-  prometheus_server: 
-    image: luongquocdat01091995/prometheus-server
-    deploy:
-      placement:
-        constraints:
-          - "node.labels.node_number==4"
-    ports:
-      - target: 9090
-        published: 9090
-        
 #   media-server:
 #     image: media-server
 #     deploy:
