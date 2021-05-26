@@ -70,16 +70,11 @@ class User(threading.Thread):
                 time.sleep(0.5)
             else:
 
-                try:
-                    r = upool.request('GET',URL)
-                    if (r.status != 200):
-                        error = error + 1
-                        err.inc()
-                        print(r.status)
-                except:
-                    print("err: ", sys.exc_info()[0])
+                r = upool.request('GET',URL)
+                if (r.status != 200):
                     error = error + 1
-                    print("error: " + str(error))
+                    err.inc()
+                    print(r.status)
                 
                 time.sleep(0.5)
                 # time.sleep(np.random.uniform(low=0.1, high=0.5))

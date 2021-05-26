@@ -21,8 +21,8 @@ import os
 # MEDIA_SERVICE = os.getenv('MEDIA_SERVICE')
 # URL = "http://" + IP_ADDRESS + ":" + PORT_NUMBER
 
-IP_ADDRESS = "131.155.35.52"
-PORT_NUMBER = "8983"
+IP_ADDRESS = "131.155.35.54"
+PORT_NUMBER = "8001"
 # URL ="http://192.168.3.84:8088/aaa.mp4"
 # URL ="http://131.155.35.53:8096"
 URL = "http://" + IP_ADDRESS + ":" + PORT_NUMBER
@@ -111,7 +111,7 @@ class UserTestMeasure(threading.Thread):
 
 if __name__ == '__main__':
     # start_http_server(int(int(str(PORT_NUMBER)) + 100))
-    start_http_server(int(int(str(PORT_NUMBER)) + 100))
+    start_http_server(9999)
     t = UserTestMeasure()
     t.start()
 
