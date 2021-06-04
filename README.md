@@ -150,10 +150,13 @@ docker service create --constraint node.labels.node_number==4 \
                                     --name load_balancer_4 luongquocdat01091995/network_services:load-balancer-general 
 
 Update service at each load balancer:
-docker service update --env-add WEIGHT_SEARCH_2=1 --env-add WEIGHT_SEARCH_3=2 --env-add WEIGHT_SEARCH_4=0 \
+docker service update --env-add WEIGHT_SEARCH_2=1 --env-add WEIGHT_SEARCH_3=2 --env-add WEIGHT_SEARCH_4=7 \
                       --env-add WEIGHT_SHOP_2=1 --env-add WEIGHT_SHOP_3=2 --env-add WEIGHT_SHOP_4=2 \
                       --env-add WEIGHT_WEB_2=1 --env-add WEIGHT_WEB_3=2 --env-add WEIGHT_WEB_4=2 \
                       --env-add WEIGHT_MEDIA_2=1 --env-add WEIGHT_MEDIA_3=2 --env-add WEIGHT_MEDIA_4=2 \
+                      --env-add IP_ADDRESS_NODE_2=192.168.3.74 --env-add IP_ADDRESS_NODE_3=192.168.3.84 --env-add IP_ADDRESS_NODE_4=192.168.3.94 \
+                      --env-add PORT_ADDRESS_SEARCH_LISTEN=8984 --env-add PORT_ADDRESS_SHOP_LISTEN=8097 --env-add PORT_ADDRESS_WEB_LISTEN=8081 --env-add PORT_ADDRESS_MEDIA_LISTEN=8089 \
+                      --env-add PORT_ADDRESS_SEARCH_FORWARD=8983 --env-add PORT_ADDRESS_SHOP_FORWARD=8096 --env-add PORT_ADDRESS_WEB_FORWARD=8080 --env-add PORT_ADDRESS_MEDIA_FORWARD=8088 \
                       load_balancer_2
 
 docker service update --env-add WEIGHT_SEARCH_2=1 --env-add WEIGHT_SEARCH_3=2 --env-add WEIGHT_SEARCH_4=2 \

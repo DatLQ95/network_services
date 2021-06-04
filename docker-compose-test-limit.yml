@@ -1,0 +1,30 @@
+version: "3.6"
+
+services:
+  search_server:
+    image: localhost:5000/search-server:latest
+    deploy:
+      placement: 
+          constraints: 
+              - "node.labels.node_number==4"
+    ports:
+      - target: 80
+        published: 8983
+        mode: host 
+
+#--------------------------------------------------------------
+  search_client_4:
+    image: localhost:5000/service-client:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==4"
+    ports:
+        - target: 9083
+          published: 9083
+          mode: host
+    environment: 
+        IP_ADDRESS: 131.155.35.54
+        PORT_NUMBER: 8983
+        USER_NO: 5
+        MEDIA_SERVICE: 0
