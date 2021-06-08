@@ -27,18 +27,45 @@ URL = "http://" + IP_ADDRESS + ":" + PORT_NUMBER
 # MEDIA_SERVICE = 0
 # USER_NO = "100"
 
+client_name = str()
+
+if int(PORT_NUMBER) == 8001:
+    client_name = "search_client_"
+
+if int(PORT_NUMBER) == 8002:
+    client_name = "shop_client_"
+
+if int(PORT_NUMBER) == 8003:
+    client_name = "web_client_"
+
+if int(PORT_NUMBER) == 8004:
+    client_name = "media_client_"
+
+if IP_ADDRESS == "131.155.35.54":
+    client_name = client_name + "4"
+
+if IP_ADDRESS == "131.155.35.53":
+    client_name = client_name + "3"
+
+if IP_ADDRESS == "131.155.35.52":
+    client_name = client_name + "2"
+
+if IP_ADDRESS == "131.155.35.51":
+    client_name = client_name + "1"
 
 #Global var:
 number_user = 0
 error = 0
+freq_request_per_thread = 0.5
 
 #TODO: this is prometheous code 
-bucks = [(i*50) for i in range(20,100)]
+bucks = [(i*10) for i in range(20,100)]
 
-h = Histogram('request_latency_seconds', 'Description of histogram', buckets= bucks)
+h = Histogram("request_latency_seconds_" + client_name, 'Description of histogram', buckets= bucks)
 s = Summary('summary_request_latency_seconds', 'Description of summary')
 err = Counter('drop_conn', 'Description of counter')
 number_req = Counter('success_conn', 'Description of counter')
+err_connect = Counter('error_conn', 'Description of counter')
 
 upool = urllib3.PoolManager(num_pools=50)
 
@@ -61,18 +88,21 @@ class User(threading.Thread):
         while(True):
             if self.stopped():
                 return
+            err_connect.inc()
             if int(MEDIA_SERVICE) == 1: 
                 text = "rtmp://" + IP_ADDRESS + ":" + PORT_NUMBER + "/vod/aaa.mp4"
                 run(['ffmpeg',  '-i',  text, '-c:v', 'copy', '-c:a', 'copy', '-segment_list_flags', '+live', '-y', '-f', 'flv', 'emre.flv', '-y'])  
             else:
                 r = upool.request('GET', URL)
+                print("error in connection to")
+                
                 if (r.status == 200):
                     number_req.inc()
                 else:
                     # error = error + 1
                     err.inc()
                     print(r.status)
-            time.sleep(0.5)
+            time.sleep(freq_request_per_thread)
                 # time.sleep(np.random.uniform(low=0.1, high=0.5))
                 # time.sleep(np.random.exponential(30))
 
@@ -122,13 +152,15 @@ if __name__ == '__main__':
                 t = User()
                 t.start()
                 UserThreads.append(t)
-                time.sleep(0.01)
+                time_sleep = (freq_request_per_thread / add_number_user)
+                time.sleep(time_sleep)
         elif(add_number_user < 0):
             for i,t in enumerate(UserThreads):
                 if (i < (add_number_user * (-1))):
                     t.stop()
                     UserThreads.remove(t)
-                    time.sleep(0.01)
+                    time_sleep = (freq_request_per_thread / (add_number_user) * (-1))
+                    time.sleep(time_sleep)
         number_user = int(str(USER_NO))
         time.sleep(0.1)
         pass
