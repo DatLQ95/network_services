@@ -2,7 +2,7 @@ version: "3.6"
 
 services:
   search_server:
-    image: localhost:5000/search-server:latest
+    image: luongquocdat01091995/search-server-100:latest
     deploy:
       placement: 
           constraints: 
@@ -14,7 +14,7 @@ services:
 
 #--------------------------------------------------------------
   search_client_4:
-    image: localhost:5000/service-client:latest
+    image: luongquocdat01091995/service-client:latest
     deploy:
         placement: 
             constraints: 
@@ -26,5 +26,5 @@ services:
     environment: 
         IP_ADDRESS: 131.155.35.54
         PORT_NUMBER: 8983
-        USER_NO: 5
+        USER_NO: 50
         MEDIA_SERVICE: 0

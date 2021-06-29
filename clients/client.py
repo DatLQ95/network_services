@@ -94,8 +94,7 @@ class User(threading.Thread):
                 run(['ffmpeg',  '-i',  text, '-c:v', 'copy', '-c:a', 'copy', '-segment_list_flags', '+live', '-y', '-f', 'flv', 'emre.flv', '-y'])  
             else:
                 r = upool.request('GET', URL)
-                print("error in connection to")
-                
+
                 if (r.status == 200):
                     number_req.inc()
                 else:
