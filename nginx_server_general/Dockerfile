@@ -61,7 +61,7 @@ COPY --from=builder /etc/nginx /etc/nginx
 COPY --from=builder /var/log/nginx /var/log/nginx
 COPY --from=builder /var/lock /var/lock
 COPY --from=builder /var/run/nginx /var/run/nginx
-COPY ./static-html-directory/ /usr/share/nginx/html/
+COPY ./static-html-directory/ /usr/local/nginx/html/
 
 # Forward logs to Docker
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
@@ -69,5 +69,9 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
 
 # Copy  nginx config file to container
 COPY conf/nginx.conf /etc/nginx/nginx.conf
+EXPOSE 8983
+EXPOSE 8080
+EXPOSE 8095
+
 
 CMD ["nginx", "-g", "daemon off;"]
