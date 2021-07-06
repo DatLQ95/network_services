@@ -1,4 +1,4 @@
-docker service create --mode global \
-                      --publish mode=host,tartget=80,published=8096
-                      --name web_server
-                      web-server  
+To run :
+
+unlimitted verion:
+docker run --name server_generic -p 8983:8983 -p 8080:8080 -p 8095:8095 luongquocdat01091995/server-generic-unlimitted:latest
