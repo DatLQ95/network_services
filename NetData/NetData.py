@@ -22,7 +22,7 @@ class NetData(Thread):
         # run this for a lot of time
         while not self.stopped.wait(1):
             # exception control here:
-            with urllib.request.urlopen("http://131.155.35.53:19999/api/v1/allmetrics?format=json") as url:
+            with urllib.request.urlopen("http://131.155.35.54:19999/api/v1/allmetrics?format=json") as url:
                 data = json.loads(url.read().decode())
                 with open(self.received_data, 'a') as out:
                     out.write(str(data["net.eno1"]["dimensions"]["received"]["value"]) + ', ')

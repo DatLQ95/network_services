@@ -41,13 +41,13 @@ if int(PORT_NUMBER) == 8003:
 if int(PORT_NUMBER) == 8004:
     client_name = "media_client_"
 
-if IP_ADDRESS == "131.155.35.54":
+if IP_ADDRESS == "131.155.35.54" or IP_ADDRESS == "192.168.3.94":
     client_name = client_name + "4"
 
-if IP_ADDRESS == "131.155.35.53":
+if IP_ADDRESS == "131.155.35.53"or IP_ADDRESS == "192.168.3.84":
     client_name = client_name + "3"
 
-if IP_ADDRESS == "131.155.35.52":
+if IP_ADDRESS == "131.155.35.52"or IP_ADDRESS == "192.168.3.74":
     client_name = client_name + "2"
 
 if IP_ADDRESS == "131.155.35.51":

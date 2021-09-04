@@ -1,0 +1,687 @@
+version: "3.6"
+
+services:
+  search_server_2:
+    image: luongquocdat01091995/search-server-200:latest
+    deploy:
+      placement: 
+        constraints: 
+            - "node.labels.node_number==2"
+    ports:
+      - target: 80
+        published: 8983
+        mode: host 
+  
+  search_server_3:
+    image: luongquocdat01091995/search-server-200:latest
+    deploy:
+      placement: 
+        constraints: 
+            - "node.labels.node_number==3"
+    ports:
+      - target: 80
+        published: 8983
+        mode: host 
+
+  search_server_4:
+    image: luongquocdat01091995/search-server-200:latest
+    deploy:
+      placement: 
+        constraints: 
+            - "node.labels.node_number==4"
+    ports:
+      - target: 80
+        published: 8983
+        mode: host 
+
+  node_exporter_search_2:
+    image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+    deploy:
+      placement:
+        constraints:
+          - "node.labels.node_number==2"
+    ports:
+        - target: 9113
+          published: 9101
+          mode: host
+    command: -nginx.scrape-uri=http://192.168.3.74:8983/metrics
+  
+  node_exporter_search_3:
+    image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+    deploy:
+      placement:
+        constraints:
+          - "node.labels.node_number==3"
+    ports:
+        - target: 9113
+          published: 9101
+          mode: host
+    command: -nginx.scrape-uri=http://192.168.3.84:8983/metrics
+
+  node_exporter_search_4:
+    image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+    deploy:
+      placement:
+        constraints:
+          - "node.labels.node_number==4"
+    ports:
+        - target: 9113
+          published: 9101
+          mode: host
+    command: -nginx.scrape-uri=http://192.168.3.94:8983/metrics
+
+# #--------------------------------------------------------------
+#   shop_server:
+#     image: luongquocdat01091995/shop-server:latest
+#     deploy:
+#         mode: global
+#     ports:
+#         - target: 80
+#           published: 8080
+#           mode: host
+
+#   node_exporter_shop_2:
+#     image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+#     deploy:
+#       placement:
+#         constraints:
+#           - "node.labels.node_number==2"
+#     ports:
+#         - target: 9113
+#           published: 9102
+#           mode: host
+#     command: -nginx.scrape-uri=http://192.168.3.74:8080/metrics
+  
+#   node_exporter_shop_3:
+#     image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+#     deploy:
+#       placement:
+#         constraints:
+#           - "node.labels.node_number==3"
+#     ports:
+#         - target: 9113
+#           published: 9102
+#           mode: host
+#     command: -nginx.scrape-uri=http://192.168.3.84:8080/metrics
+
+#   node_exporter_shop_4:
+#     image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+#     deploy:
+#       placement:
+#         constraints:
+#           - "node.labels.node_number==4"
+#     ports:
+#         - target: 9113
+#           published: 9102
+#           mode: host
+#     command: -nginx.scrape-uri=http://192.168.3.94:8080/metrics
+
+# #--------------------------------------------------------------
+#   web_server:
+#     image: luongquocdat01091995/web-server:latest
+#     deploy:
+#         mode: global
+#     ports:
+#         - target: 80
+#           published: 8096
+#           mode: host
+
+#   node_exporter_web_2:
+#     image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+#     deploy:
+#       placement:
+#         constraints:
+#           - "node.labels.node_number==2"
+#     ports:
+#         - target: 9113
+#           published: 9103
+#           mode: host
+#     command: -nginx.scrape-uri=http://192.168.3.74:8096/metrics
+  
+#   node_exporter_web_3:
+#     image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+#     deploy:
+#       placement:
+#         constraints:
+#           - "node.labels.node_number==3"
+#     ports:
+#         - target: 9113
+#           published: 9103
+#           mode: host
+#     command: -nginx.scrape-uri=http://192.168.3.84:8096/metrics
+
+#   node_exporter_web_4:
+#     image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+#     deploy:
+#       placement:
+#         constraints:
+#           - "node.labels.node_number==4"
+#     ports:
+#         - target: 9113
+#           published: 9103
+#           mode: host
+#     command: -nginx.scrape-uri=http://192.168.3.94:8096/metrics
+
+# #--------------------------------------------------------------
+#   media_server:
+#     image: luongquocdat01091995/media-server:latest
+#     deploy:
+#         mode: global
+#     ports:
+#         - target: 80
+#           published: 8088
+#           mode: host
+#         - target: 1935
+#           published: 1935
+#           mode: host
+  
+#   node_exporter_media_2:
+#     image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+#     deploy:
+#       placement:
+#         constraints:
+#           - "node.labels.node_number==2"
+#     ports:
+#         - target: 9113
+#           published: 9104
+#           mode: host
+#     command: -nginx.scrape-uri=http://192.168.3.74:8088/metrics
+  
+#   node_exporter_media_3:
+#     image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+#     deploy:
+#       placement:
+#         constraints:
+#           - "node.labels.node_number==3"
+#     ports:
+#         - target: 9113
+#           published: 9104
+#           mode: host
+#     command: -nginx.scrape-uri=http://192.168.3.84:8088/metrics
+
+#   node_exporter_media_4:
+#     image: luongquocdat01091995/nginx-prometheus-exporter:0.9.0
+#     deploy:
+#       placement:
+#         constraints:
+#           - "node.labels.node_number==4"
+#     ports:
+#         - target: 9113
+#           published: 9104
+#           mode: host
+#     command: -nginx.scrape-uri=http://192.168.3.94:8088/metrics
+
+#--------------------------------------------------------------
+  prometheus: 
+    image: luongquocdat01091995/prometheus-server
+    deploy:
+      placement:
+        constraints:
+          - "node.labels.node_number==4"
+    ports:
+      - target: 9090
+        published: 9090
+        
+#--------------------------------------------------------------
+  load_balancer_2:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==2"
+    ports:
+        - target: 8984
+          published: 8984
+          mode: host
+        - target: 8081
+          published: 8081
+          mode: host
+        - target: 8097
+          published: 8097
+          mode: host
+        - target: 8089
+          published: 8089
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 2
+        WEIGHT_SEARCH_4: 3
+        WEIGHT_SHOP_2: 2
+        WEIGHT_SHOP_3: 2
+        WEIGHT_SHOP_4: 2
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 2
+        WEIGHT_WEB_4: 2
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 2
+        WEIGHT_MEDIA_4: 2 
+        IP_ADDRESS_NODE_2: 192.168.3.74
+        IP_ADDRESS_NODE_3: 192.168.3.84
+        IP_ADDRESS_NODE_4: 192.168.3.94
+        PORT_ADDRESS_SEARCH_LISTEN: 8984
+        PORT_ADDRESS_SHOP_LISTEN: 8081
+        PORT_ADDRESS_WEB_LISTEN: 8097
+        PORT_ADDRESS_MEDIA_LISTEN: 8089
+        PORT_ADDRESS_SEARCH_FORWARD: 8983
+        PORT_ADDRESS_SHOP_FORWARD: 8080
+        PORT_ADDRESS_WEB_FORWARD: 8096
+        PORT_ADDRESS_MEDIA_FORWARD: 8088
+    
+  load_balancer_3:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==3"
+    ports:
+        - target: 8984
+          published: 8984
+          mode: host
+        - target: 8081
+          published: 8081
+          mode: host
+        - target: 8097
+          published: 8097
+          mode: host
+        - target: 8089
+          published: 8089
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 2
+        WEIGHT_SEARCH_4: 3
+        WEIGHT_SHOP_2: 2
+        WEIGHT_SHOP_3: 2
+        WEIGHT_SHOP_4: 2
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 2
+        WEIGHT_WEB_4: 2
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 2
+        WEIGHT_MEDIA_4: 2 
+        IP_ADDRESS_NODE_2: 192.168.3.74
+        IP_ADDRESS_NODE_3: 192.168.3.84
+        IP_ADDRESS_NODE_4: 192.168.3.94
+        PORT_ADDRESS_SEARCH_LISTEN: 8984
+        PORT_ADDRESS_SHOP_LISTEN: 8081
+        PORT_ADDRESS_WEB_LISTEN: 8097
+        PORT_ADDRESS_MEDIA_LISTEN: 8089
+        PORT_ADDRESS_SEARCH_FORWARD: 8983
+        PORT_ADDRESS_SHOP_FORWARD: 8080
+        PORT_ADDRESS_WEB_FORWARD: 8096
+        PORT_ADDRESS_MEDIA_FORWARD: 8088
+
+  load_balancer_4:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==4"
+    ports:
+        - target: 8984
+          published: 8984
+          mode: host
+        - target: 8081
+          published: 8081
+          mode: host
+        - target: 8097
+          published: 8097
+          mode: host
+        - target: 8089
+          published: 8089
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 2
+        WEIGHT_SEARCH_4: 3
+        WEIGHT_SHOP_2: 2
+        WEIGHT_SHOP_3: 2
+        WEIGHT_SHOP_4: 2
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 2
+        WEIGHT_WEB_4: 2
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 2
+        WEIGHT_MEDIA_4: 2 
+        IP_ADDRESS_NODE_2: 192.168.3.74
+        IP_ADDRESS_NODE_3: 192.168.3.84
+        IP_ADDRESS_NODE_4: 192.168.3.94
+        PORT_ADDRESS_SEARCH_LISTEN: 8984
+        PORT_ADDRESS_SHOP_LISTEN: 8081
+        PORT_ADDRESS_WEB_LISTEN: 8097
+        PORT_ADDRESS_MEDIA_LISTEN: 8089
+        PORT_ADDRESS_SEARCH_FORWARD: 8983
+        PORT_ADDRESS_SHOP_FORWARD: 8080
+        PORT_ADDRESS_WEB_FORWARD: 8096
+        PORT_ADDRESS_MEDIA_FORWARD: 8088
+  
+#--------------------------------------------------------------
+  load_balancer_node_2:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==2"
+    ports:
+        - target: 8001
+          published: 8001
+          mode: host
+        - target: 8002
+          published: 8002
+          mode: host
+        - target: 8003
+          published: 8003
+          mode: host
+        - target: 8004
+          published: 8004
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 2
+        WEIGHT_SEARCH_4: 3
+        WEIGHT_SHOP_2: 2
+        WEIGHT_SHOP_3: 2
+        WEIGHT_SHOP_4: 2
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 2
+        WEIGHT_WEB_4: 2
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 2
+        WEIGHT_MEDIA_4: 2 
+        IP_ADDRESS_NODE_2: 192.168.3.74
+        IP_ADDRESS_NODE_3: 192.168.3.84
+        IP_ADDRESS_NODE_4: 192.168.3.94
+        PORT_ADDRESS_SEARCH_LISTEN: 8001
+        PORT_ADDRESS_SHOP_LISTEN: 8002
+        PORT_ADDRESS_WEB_LISTEN: 8003
+        PORT_ADDRESS_MEDIA_LISTEN: 8004
+        PORT_ADDRESS_SEARCH_FORWARD: 8984
+        PORT_ADDRESS_SHOP_FORWARD: 8081
+        PORT_ADDRESS_WEB_FORWARD: 8097
+        PORT_ADDRESS_MEDIA_FORWARD: 8089
+
+  load_balancer_node_3:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==3"
+    ports:
+        - target: 8001
+          published: 8001
+          mode: host
+        - target: 8002
+          published: 8002
+          mode: host
+        - target: 8003
+          published: 8003
+          mode: host
+        - target: 8004
+          published: 8004
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 1
+        WEIGHT_SEARCH_4: 1
+        WEIGHT_SHOP_2: 1
+        WEIGHT_SHOP_3: 1
+        WEIGHT_SHOP_4: 1
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 1
+        WEIGHT_WEB_4: 1
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 1
+        WEIGHT_MEDIA_4: 1 
+        IP_ADDRESS_NODE_2: 192.168.3.74
+        IP_ADDRESS_NODE_3: 192.168.3.84
+        IP_ADDRESS_NODE_4: 192.168.3.94
+        PORT_ADDRESS_SEARCH_LISTEN: 8001
+        PORT_ADDRESS_SHOP_LISTEN: 8002
+        PORT_ADDRESS_WEB_LISTEN: 8003
+        PORT_ADDRESS_MEDIA_LISTEN: 8004
+        PORT_ADDRESS_SEARCH_FORWARD: 8984
+        PORT_ADDRESS_SHOP_FORWARD: 8081
+        PORT_ADDRESS_WEB_FORWARD: 8097
+        PORT_ADDRESS_MEDIA_FORWARD: 8089
+
+  load_balancer_node_4:
+    image: luongquocdat01091995/load-balancer:latest
+    deploy:
+        placement: 
+            constraints: 
+                - "node.labels.node_number==4"
+    ports:
+        - target: 8001
+          published: 8001
+          mode: host
+        - target: 8002
+          published: 8002
+          mode: host
+        - target: 8003
+          published: 8003
+          mode: host
+        - target: 8004
+          published: 8004
+          mode: host
+    environment: 
+        WEIGHT_SEARCH_2: 1
+        WEIGHT_SEARCH_3: 1
+        WEIGHT_SEARCH_4: 1
+        WEIGHT_SHOP_2: 1
+        WEIGHT_SHOP_3: 1
+        WEIGHT_SHOP_4: 1
+        WEIGHT_WEB_2: 1
+        WEIGHT_WEB_3: 1
+        WEIGHT_WEB_4: 1
+        WEIGHT_MEDIA_2: 1
+        WEIGHT_MEDIA_3: 1
+        WEIGHT_MEDIA_4: 1 
+        IP_ADDRESS_NODE_2: 192.168.3.74
+        IP_ADDRESS_NODE_3: 192.168.3.84
+        IP_ADDRESS_NODE_4: 192.168.3.94
+        PORT_ADDRESS_SEARCH_LISTEN: 8001
+        PORT_ADDRESS_SHOP_LISTEN: 8002
+        PORT_ADDRESS_WEB_LISTEN: 8003
+        PORT_ADDRESS_MEDIA_LISTEN: 8004
+        PORT_ADDRESS_SEARCH_FORWARD: 8984
+        PORT_ADDRESS_SHOP_FORWARD: 8081
+        PORT_ADDRESS_WEB_FORWARD: 8097
+        PORT_ADDRESS_MEDIA_FORWARD: 8089
+
+# #--------------------------------------------------------------
+#   search_client_2:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==2"
+#     ports:
+#         - target: 8101
+#           published: 8101
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.74
+#         PORT_NUMBER: 8001
+#         USER_NO: 5
+#         MEDIA_SERVICE: 0
+
+#   shop_client_2:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==2"
+#     ports:
+#         - target: 8102
+#           published: 8102
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.74
+#         PORT_NUMBER: 8002
+#         USER_NO: 5
+#         MEDIA_SERVICE: 0
+
+#   web_client_2:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==2"
+#     ports:
+#         - target: 8103
+#           published: 8103
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.74
+#         PORT_NUMBER: 8003
+#         USER_NO: 5
+#         MEDIA_SERVICE: 0
+
+#   media_client_2:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==2"
+#     ports:
+#         - target: 8104
+#           published: 8104
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.74
+#         PORT_NUMBER: 8004
+#         USER_NO: 5
+#         MEDIA_SERVICE: 1
+
+# #--------------------------------------------------------------
+#   search_client_3:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==3"
+#     ports:
+#         - target: 8101
+#           published: 8101
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.84
+#         PORT_NUMBER: 8001
+#         USER_NO: 5
+#         MEDIA_SERVICE: 0
+
+#   shop_client_3:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==3"
+#     ports:
+#         - target: 8102
+#           published: 8102
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.84
+#         PORT_NUMBER: 8002
+#         USER_NO: 5
+#         MEDIA_SERVICE: 0
+
+#   web_client_3:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==3"
+#     ports:
+#         - target: 8103
+#           published: 8103
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.84
+#         PORT_NUMBER: 8003
+#         USER_NO: 5
+#         MEDIA_SERVICE: 0
+
+#   media_client_3:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==3"
+#     ports:
+#         - target: 8104
+#           published: 8104
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.84
+#         PORT_NUMBER: 8004
+#         USER_NO: 5
+#         MEDIA_SERVICE: 1
+
+# #--------------------------------------------------------------
+#   search_client_4:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==4"
+#     ports:
+#         - target: 8101
+#           published: 8101
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.94
+#         PORT_NUMBER: 8001
+#         USER_NO: 5
+#         MEDIA_SERVICE: 0
+
+#   shop_client_4:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==4"
+#     ports:
+#         - target: 8102
+#           published: 8102
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.94
+#         PORT_NUMBER: 8002
+#         USER_NO: 5
+#         MEDIA_SERVICE: 0
+
+#   web_client_4:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==4"
+#     ports:
+#         - target: 8103
+#           published: 8103
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.94
+#         PORT_NUMBER: 8003
+#         USER_NO: 5
+#         MEDIA_SERVICE: 0
+
+#   media_client_4:
+#     image: luongquocdat01091995/service-client:latest
+#     deploy:
+#         placement: 
+#             constraints: 
+#                 - "node.labels.node_number==4"
+#     ports:
+#         - target: 8104
+#           published: 8104
+#           mode: host
+#     environment: 
+#         IP_ADDRESS: 192.168.3.94
+#         PORT_NUMBER: 8004
+#         USER_NO: 5
+#         MEDIA_SERVICE: 1
+
+# #--------------------------------------------------------------
+
