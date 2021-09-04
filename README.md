@@ -1,29 +1,29 @@
 # Guide line #
 
 ## Set up env before running the RL Agent##
+The Docker compose do the following tasks:
 1. Set up Prometheous server. 
-1. Run start-up.sh file to update all the images in each node. 
 2. Build the image-server locally in each node.
 3. Create servers using docker swarm.
 4. Create load balancer using docker swarm.
 5. Create node load balancer using docker swarm. 
 6. Create the service client containers
-7. Start all containers and wait for them to stablize. 
+7. Start all containers.
 
 ## Reset environment ##
 ### Init the environment, start all over again. ###
 1. Set number user for each client services in each ingress nodes to start point.
 2. Run all client services containers.
-3. Wait for the container to be stable. (appx = 5 sec)
+3. Wait for the container to be stable.
 4. Run the client containers with initial user number.
-5. Capture and return the observe bandwidth ingress from each node.
+5. Capture and return the observed values from each node.
 
 ## Apply action (step) ##
 
 1. Get the action space / action array from Agent RL.
-2. Apply action: -> Docker swarm update
-- Change the number of user of each service according to running time -> Docker Swarm Update 
-- Change the weight accordingly -> Docker Swarm Update
+2. Apply action: -> container update
+- Change the number of user of each service according to running time -> Docker Update 
+- Change the weight accordingly -> Docker Update
 3. Capture at same time: -> Prometheous + Netdata ( or other tool to collect container traffic info)
 - Capture bandwidth value at each ingress node for each service (after time t2) -> netdata 
 - Capture latency for each services. -> Prometheous in each client container
